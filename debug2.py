@@ -5,6 +5,7 @@
 
 # %%
 import numpy as np
+import re
 
 # %%
 np.random.seed(0)
@@ -39,8 +40,6 @@ def GenRundomRull()->str:
 # %%
 generare_rull = GenRundomRull()
 print(generare_rull)
-generare_rull_list = generare_rull.split(' ')
-print(generare_rull_list)
 
 # %%
 treining_set_T = [[[1, 0, 0], [1, 0, 1], [0, 1, 0]],
@@ -52,75 +51,78 @@ treining_set_F = [[[0, 0, 1], [0, 1, 0], [1, 0, 0]],
 
 # %%
 # not p4 or (p4 or p8) and (p2 and p9) or p9
+print(generare_rull.split(' '))
+generare_rull_list = [re.findall(r'\(||\)||not||[0-9]||or||and', rull) for rull in generare_rull.split(' ')]
+print(generare_rull_list)
+generare_rull_list = [r for rull in generare_rull_list for r in rull if r != '']
+print(generare_rull_list)
 
-operator:str = ''
-result_T:bool = []
-result_F:bool = []
-is_not: bool = False
+# %%
+# not p4 or (p4 or p8) and (p2 and p9) or p9
+rull_list_len = len(generare_rull_list)
+rull = 0
+while rull < rull_list_len:
+    if generare_rull_list[rull] == 'not':
+        generare_rull_list[rull+1] = f'-{generare_rull_list[rull+1]}'
+        generare_rull_list.pop(rull)
+        rull_list_len -= 1
+    elif generare_rull_list[rull] == '(':
+        temp_lst = []
+        i = rull + 1
+        generare_rull_list[rull] = temp_lst
+        while generare_rull_list[i] != ')':
+            temp_lst.append(generare_rull_list[i])
+            generare_rull_list.pop(i)
+            rull_list_len -= 1
+        else:
+            generare_rull_list.pop(i)
+            rull_list_len -= 1
+    rull+=1
 
-for i in range(len(generare_rull_list)):
-    curr_bool_T:bool = True
-    curr_bool_F:bool = True
+# %%
+def to_int(lst):
+    filtered_list = []
+    for rull in lst:
+        if isinstance(rull, list):
+            filtered_list.append(to_int(rull))
+        elif rull != 'or' and rull != 'and':
+            filtered_list.append(int(rull))
+        else:
+            filtered_list.append(rull)
+    return filtered_list
 
-    if generare_rull_list[i] == 'or' or generare_rull_list[i] == 'and':
-        operator = generare_rull_list[i]
-    elif generare_rull_list[i] == 'not':
-        is_not = True
-    elif generare_rull_list[i][0] == '(':
-        for t in treining_set_T:
-            if not t[int(generare_rull_list[i][2])//3][(int(generare_rull_list[i][2])%3)-1]:
-                curr_bool_t = False
-        if is_not:
-            curr_bool_T = not curr_bool_T
-        
-        for f in treining_set_F:
-            if not f[int(generare_rull_list[i][2])//3][(int(generare_rull_list[i][2])%3)-1]:
-                curr_bool_F = False
-        if is_not:
-            curr_bool_F = not curr_bool_F
+# %%
+generare_rull_list = to_int(generare_rull_list)
+print(generare_rull_list)
 
-        i += 1
+# %%
+def check_rull(rull_lst, treining_set):
+    check_rull_lst = []
+    for rull in rull_lst:
+        if isinstance(rull, list):
+            check_rull_lst.append(check_rull(rull, treining_set))
+        elif rull == 'or' or rull == 'and':
+            check_rull_lst.append(rull)
+        else:
+            for i in range(len(treining_set)):
+                print(np.abs(rull))
+                row = (np.abs(rull)//3)-1 if np.abs(rull)%3 == 0 else np.abs(rull)//3
+                if i == 0:
+                    check_rull_lst.append(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
+                    print(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
+                    print(check_rull_lst)
+                else:
+                    if treining_set[i][row][(np.abs(rull)%3)-1] != 0:
+                        check_rull_lst[-1] = False
+                    print(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
+                    print(check_rull_lst)
+    return check_rull_lst
 
-        if not len(result_F):
-            result_F.append(curr_bool)
-        elif operator == 'or':
-            result_F[0] = result_F[0] or curr_bool
-        elif operator == 'and':
-            result_F[0] = result_F[0] and curr_bool
-        
-        operator = ''
-        i+=1
-    else:
-        for t in treining_set_T:
-            print(generare_rull_list[i][1])
-            if not t[int(generare_rull_list[i][1])//3][(int(generare_rull_list[i][1])%3)]:
-                curr_bool = False
-        if is_not:
-            curr_bool = not curr_bool
-        
-        if not len(result_T):
-                result_T.append(curr_bool)
-        elif operator == 'or':
-            result_T[0] = result_T[0] or curr_bool
-        elif operator == 'and':
-            result_T[0] = result_T[0] and curr_bool
+# %%
+check_rull_T = check_rull(generare_rull_list, treining_set_T)
+check_rull_F = check_rull(generare_rull_list, treining_set_F)
 
-        curr_bool = True
-
-        for f in treining_set_F:
-            if not f[int(generare_rull_list[i][1])//3][(int(generare_rull_list[i][1])%3)-1]:
-                curr_bool = False
-        if is_not:
-            curr_bool = not curr_bool
-        
-        if not len(result_F):
-            result_F.append(curr_bool)
-        elif operator == 'or':
-            result_F[0] = result_F[0] or curr_bool
-        elif operator == 'and':
-            result_F[0] = result_F[0] and curr_bool
-        
-        operator = ''
-
+print(check_rull_T)
+print(check_rull_F)
 
 
