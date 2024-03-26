@@ -190,7 +190,7 @@ def to_int(lst):
     return filtered_list
 
 # %%
-def check_rull(rull_lst, treining_set, bool_r=False):
+def check_rull(rull_lst, treining_set):
     """
     Evaluates a logical rule against a training set.
 
@@ -201,24 +201,54 @@ def check_rull(rull_lst, treining_set, bool_r=False):
     Returns:
         list: A list of boolean values indicating whether the rule holds for each training example.
     """
+    print(rull_lst)
     check_rull_lst = []
+    situation = 0
     for rull in rull_lst:
         if isinstance(rull, list):
-            check_rull_lst.append(check_rull(rull, treining_set, bool_r))
+            check_rull_lst.append(check_rull(rull, treining_set)[0])
         elif rull == 'or' or rull == 'and':
             check_rull_lst.append(rull)
         else:
             for i in range(len(treining_set)):
                 row = (np.abs(rull)//3)-1 if np.abs(rull)%3 == 0 else np.abs(rull)//3
                 if i == 0:
-                    check_rull_lst.append(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
+                    if rull > 0:
+                        if treining_set[i][row][(np.abs(rull)%3)-1] != 0:
+                            check_rull_lst.append(True)
+                            situation = 0
+                        else:
+                            check_rull_lst.append(False)
+                            situation = 1
+                    else:
+                        if treining_set[i][row][(np.abs(rull)%3)-1] == 0:
+                            check_rull_lst.append(True)
+                            situation = 0
+                        else:
+                            check_rull_lst.append(False)
+                            situation = 1
                 else:
-                    if treining_set[i][row][(np.abs(rull)%3)-1] == 0:
-                        check_rull_lst[-1] = False
-                if check_rull_lst[-1] and bool_r:
-                    return True
+                    if rull > 0:
+                        if treining_set[i][row][(np.abs(rull)%3)-1] == 0:
+                            if check_rull_lst[-1] == True:
+                                situation = 2
+                            check_rull_lst[-1] = False
+                        else:
+                            if check_rull_lst[-1] == False:
+                                situation = 2
+                            check_rull_lst[-1] = True
+                    else:
+                        if treining_set[i][row][(np.abs(rull)%3)-1] != 0:
+                            if check_rull_lst[-1] == True:
+                                situation = 2
+                            check_rull_lst[-1] = False
+                        else:
+                            if check_rull_lst[-1] == False:
+                                situation = 2
+                            check_rull_lst[-1] = True
+                        
 
-    return check_rull_lst
+    return (check_rull_lst, situation)
 
 # %%
 def checkBoolRull(rull_lst):
@@ -231,7 +261,6 @@ def checkBoolRull(rull_lst):
     Returns:
         bool: The result of the logical evaluation.
     """
-    print(rull_lst)
     bool_rull_lst = []
     operator = ''
     for rull in range(len(rull_lst)):
@@ -273,14 +302,16 @@ def legalRull():
         generare_rull_list = addClosing(generare_rull_list)
         generare_rull_list = removeNotAndClosing(generare_rull_list)
         generare_rull_list = to_int(generare_rull_list)
-        check_rull_T = check_rull(generare_rull_list, treining_set_T, False)
+        check_rull_T, s_T = check_rull(generare_rull_list, treining_set_T)
         is_rull_T = checkBoolRull(check_rull_T)
-        check_rull_F = check_rull(generare_rull_list, treining_set_F, is_rull_T)
+        check_rull_F, s_F = check_rull(generare_rull_list, treining_set_F)
         is_rull_F = checkBoolRull(check_rull_F)
+
+        print(is_rull_T, s_T, is_rull_F, s_F)
         
-        if (is_rull_T and not is_rull_F):
+        if (is_rull_T and not is_rull_F and s_T == 0 and s_F == 1):
             return generare_rull, True
-        elif (not is_rull_T and is_rull_F):
+        elif (not is_rull_T and is_rull_F and s_T == 1 and s_F == 0):
             return generare_rull, False
 
 # %%
@@ -351,7 +382,6 @@ def find_rull(bool_r):
     for i in range(20):
         while True:
             temp_rull = legalRull()
-            print(f"-------{temp_rull[1]}-------")
             if temp_rull[1] == bool_r and activate_rull(temp_rull[0], training_example):
                 lst.append(temp_rull)
                 break
@@ -359,7 +389,9 @@ def find_rull(bool_r):
 
 # %%
 rulls_lst_T = find_rull(True)
+print("==============")
 rulls_lst_F = find_rull(False)
+print("==============")
 
 for r in rulls_lst_T:
     print(f'legal rull as --{r[1]}--:\n--------------------\n{r[0]}', end="\n\n")
