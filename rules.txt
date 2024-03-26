@@ -1,42 +1,42 @@
 # Rules that give True on test
 p1
 p1 and (p8 or p1)
+p3 or p9 and p9 and (p1 and not p6) or p1
+p9 and p1
+p9 and (p6 and p8) or (p9 or p3) or (p7 and p6) and (p1 and p1)
 not p4 or p5 or (p8 and p6) and p1
 p1 and p1
-p6 or p1
 not p4 and p1
 p4 or (p3 and p9) or (p1 or p9) or (p4 and p8) and p1
+p9 or (p9 or not p1) and p1
 p1 or p1
 not p8 and (not p6 or not p3) or (p4 and p2) and p1
 not p2 or (p4 and p1) and p1
+p9 or p2 or p4 and p1
 p1 or p9 and p1
+p8 or (p9 and p1) and p1
+p7 or (p9 or p7) and p1
 not p8 or (p8 and not p9) and p1
 p1 and (not p7 or not p8) or (p4 and p1) and (p1 or p3) or p1
-not p8 and (p3 or p8) or p1
-p1 or (p8 and p7) and (p1 or p7) or (p5 and p2) or (p3 or p1)
-not p4 or (p6 or p7) or p1
-p1 and (p7 and p1) or (p1 and p3) or (p8 or p1)
-not p3 and (p4 and p5) or p1
-p1 and (p6 and p5) or (not p8 or p6) or (p7 and p1)
-p7 or p1
+p2 or (p9 or p7) and p1 or (p1 and p2) and p1 and p1
 # Rules that give False on test
+p5 and (p5 or not p1)
+p5 and (p4 or p8) or (p9 or p4) or p1
+p5 and (p6 or p5) or (p5 or p1)
+p5 or (p3 and p1) or (p5 and p1)
+p1 or (p6 or p7) and p5 and (p5 or p1)
+not p4 and (p5 and p9) or (p5 and p3) and (p5 or p1)
+p5 and (p2 or p9) or (p1 and p1)
+p5 and p7 or (p2 or p2) or (p7 or p8) or p1
+p5 and (p7 and p7) or p1
+p5 and (not p4 or p8) and (p7 or p4) or p1
+p5 and (p1 and p4) or (p9 and p6) or (p1 and p5) or (p1 and p1)
+p5 and (p3 and not p4) or (p9 or not p2) or p1
+p5 and (p7 or p1)
 p5 or not p1
 p5 and (p5 and p9) and (not p8 or not p1)
-p9 or (p9 and p5) and (p2 or p9) or (p6 or p7) or (p5 or not p1)
-p2 or (p2 and not p7) or (p2 or p5) or not p1
-p9 and (p2 or p5) or (p6 and p8) or (p2 or not p1)
-p5 or (p7 or not p1)
-p5 and (not p6 or p4) or (p8 and not p1)
-p4 or (not p4 and p5) and (p1 or p4) or (p8 or not p3) or not p1
-p1 or (p6 or p9) and (p2 or p5) and (p1 or not p1)
-p9 or not p1
-p9 or (p4 and p9) or (p8 and p9) or (p3 and not p1)
-p6 or (p3 or p5) and (p5 or p4) or not p1
-p9 or p3 or (p9 or not p1)
-p7 or (p9 or p8) or p8 or not p1
-p5 and (p5 and p5) or p5 or (p4 and p4) or (p4 or not p1)
-p9 or (p3 and p9) or (p2 and p5) or (p7 or p8) or (p4 or not p1)
-p7 or (p2 and p9) or (p9 or not p1)
-p4 or (p5 or not p1)
-p8 or (p5 or not p1)
-p5 or (p8 and not p1)
+not p6 and (not p2 or p1)
+p5 or (p3 or p2) and (p9 and p6) or p1
+p5 and (p8 or p1) or (p2 or p1)
+p9 and (p3 or not p6) and (p3 or p1)
+p5 and (p5 and not p7) or (p1 or p8) or p1
