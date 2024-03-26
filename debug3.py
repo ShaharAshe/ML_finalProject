@@ -190,7 +190,7 @@ def to_int(lst):
     return filtered_list
 
 # %%
-def check_rull(rull_lst, treining_set):
+def check_rull(rull_lst, treining_set, bool_r=False):
     """
     Evaluates a logical rule against a training set.
 
@@ -204,24 +204,19 @@ def check_rull(rull_lst, treining_set):
     check_rull_lst = []
     for rull in rull_lst:
         if isinstance(rull, list):
-            check_rull_lst.append(check_rull(rull, treining_set))
+            check_rull_lst.append(check_rull(rull, treining_set, bool_r))
         elif rull == 'or' or rull == 'and':
             check_rull_lst.append(rull)
         else:
             for i in range(len(treining_set)):
                 row = (np.abs(rull)//3)-1 if np.abs(rull)%3 == 0 else np.abs(rull)//3
                 if i == 0:
-                    if rull > 0:
-                        check_rull_lst.append(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
-                    else:
-                        check_rull_lst.append(treining_set[i][row][(np.abs(rull)%3)-1] == 0)
+                    check_rull_lst.append(treining_set[i][row][(np.abs(rull)%3)-1] != 0)
                 else:
-                    if rull > 0:
-                        if treining_set[i][row][(np.abs(rull)%3)-1] == 0:
-                            check_rull_lst[-1] = False
-                    else:
-                        if treining_set[i][row][(np.abs(rull)%3)-1] != 0:
-                            check_rull_lst[-1] = False
+                    if treining_set[i][row][(np.abs(rull)%3)-1] == 0:
+                        check_rull_lst[-1] = False
+                if check_rull_lst[-1] and bool_r:
+                    return True
 
     return check_rull_lst
 
@@ -261,6 +256,7 @@ def checkBoolRull(rull_lst):
                 bool_rull_lst[0] = bool_rull_lst[0] and rull_lst[rull]
     return bool_rull_lst[0]
 
+
 # %%
 # q2
 
@@ -277,9 +273,9 @@ def legalRull():
         generare_rull_list = addClosing(generare_rull_list)
         generare_rull_list = removeNotAndClosing(generare_rull_list)
         generare_rull_list = to_int(generare_rull_list)
-        check_rull_T = check_rull(generare_rull_list, treining_set_T)
-        check_rull_F = check_rull(generare_rull_list, treining_set_F)
+        check_rull_T = check_rull(generare_rull_list, treining_set_T, False)
         is_rull_T = checkBoolRull(check_rull_T)
+        check_rull_F = check_rull(generare_rull_list, treining_set_F, is_rull_T)
         is_rull_F = checkBoolRull(check_rull_F)
         
         if (is_rull_T and not is_rull_F):
@@ -355,6 +351,7 @@ def find_rull(bool_r):
     for i in range(20):
         while True:
             temp_rull = legalRull()
+            print(f"-------{temp_rull[1]}-------")
             if temp_rull[1] == bool_r and activate_rull(temp_rull[0], training_example):
                 lst.append(temp_rull)
                 break
